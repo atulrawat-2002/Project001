@@ -110,8 +110,8 @@ const refreshAccessTokenController = (req, res) => {
 
         // return res.status(201).json({ accessToken })
         return res.send(success(201, { accessToken }))
-    } catch (error) {
-        console.log(error);
+    } catch (e) {
+        console.log(e);
         // return res.status(401).send("Invalid refresh token")
         return res.send(error(401, "Invalid refresh token!"))
     }
@@ -132,12 +132,12 @@ const generateAccessToken = (data) => {
 // Function for generation refresh token
 const generateRefreshToken = (data) => {
     try {
-        const token = jwt.sign(data, process.env.REFRESH_TOKEN_PRIVATE_KEY, { expiresIn: "1y" });
+        const token = jwt.sign(data, process.env.REFRESH_TOKEN_PRIVATE_KEY, { expiresIn: "1d" });
         return token;
     } catch (error) {
         console.log(error);
 
-    }
+    } 
 }
 
 module.exports = {

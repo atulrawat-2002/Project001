@@ -21,7 +21,7 @@ const requireUser = async (req, res, next) => {
 
     }
     catch (e) {
-        console.log(e);
+        console.log("   jwt expired");
         // return res.status(401).send("Unauthorized access!")
         return res.send(error(401, "Invalid access key!"))
     }
