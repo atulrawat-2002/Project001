@@ -1,11 +1,13 @@
 const jwt = require("jsonwebtoken");
+const { error } = require("../utils/responseWrapper");
 
 
 const requireUser = async (req, res, next) => {
 
     // Checking for authorization token
     if (!req.headers || !req.headers.authorization || !req.headers.authorization.startsWith("Bearer")) {
-        return res.status(409).send("Unauthorized access!")
+        // return res.status(409).send("Unauthorized access!")
+        return res.send(error(409, "Authorization header is required!"))
     }
 
     // Extracting authorization token from request headers
@@ -18,9 +20,10 @@ const requireUser = async (req, res, next) => {
         next();
 
     }
-    catch (error) {
-        console.log(error);
-        return res.status(401).send("Unauthorized access!")
+    catch (e) {
+        console.log(e);
+        // return res.status(401).send("Unauthorized access!")
+        return res.send(error(401, "Invalid access key!"))
     }
 
 
