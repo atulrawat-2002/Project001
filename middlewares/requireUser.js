@@ -12,6 +12,7 @@ const requireUser = async (req, res, next) => {
 
     // Extracting authorization token from request headers
     const accessToken = req.headers.authorization.split(" ")[1];
+    
 
     try {
         // Verifing the access token and extracting the user id from token
@@ -21,7 +22,7 @@ const requireUser = async (req, res, next) => {
 
     }
     catch (e) {
-        console.log("   jwt expired");
+        console.log(" jwt expired");
         // return res.status(401).send("Unauthorized access!")
         return res.send(error(401, "Invalid access key!"))
     }

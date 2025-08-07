@@ -7,9 +7,9 @@ const { error, success } = require("../utils/responseWrapper");
 // Controller for sign up starts
 const signUpController = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, name } = req.body;
 
-        if (!email || !password) {
+        if (!email || !password || !name) {
             // return res.status(400).send("All fields are required!")
             return res.send(error(400, "All fields are required!"))
         }
@@ -25,6 +25,7 @@ const signUpController = async (req, res) => {
 
         const user = await User.create({
             email,
+            name,
             password: hashPassword
         })
 
@@ -37,13 +38,13 @@ const signUpController = async (req, res) => {
     }
     catch (e) {
         console.log(e);
+        res.send(error(500, e.message))
     }
 }
 
 // Controller for login starts here
 const loginController = async (req, res) => {
     try {
-        console.log(req.body);
         
         const { email, password } = req.body;
 
@@ -52,7 +53,7 @@ const loginController = async (req, res) => {
             return res.send(error(400, "All fields are required!"))
         }
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select("+password"); 
 
         if (!user) {
             // return res.status(404).send("User not found!");
@@ -86,7 +87,7 @@ const loginController = async (req, res) => {
         }))
     } catch (e) {
         console.log(e);
-
+        res.send(error(500, e.message))
     }
 }
 
@@ -121,7 +122,7 @@ const refreshAccessTokenController = (req, res) => {
 // Function for generating access token
 const generateAccessToken = (data) => {
     try {
-        const token = jwt.sign(data, process.env.ACCESS_TOKEN_PRIVATE_KEY, { expiresIn: "20s" });
+        const token = jwt.sign(data, process.env.ACCESS_TOKEN_PRIVATE_KEY, { expiresIn: "1d" });
         return token;
     } catch (error) {
         console.log(error);
