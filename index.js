@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const cookieParser  = require("cookie-parser");
 const postsRouter = require("./routers/postsRouter");
 const cors = require("cors");
+const userRouter = require("./routers/userRouter");
 
 dotenv.config("./.env")
 const app = express();
@@ -36,8 +37,9 @@ app.use(cors({
 // };
 
 
-app.use("/auth", authRouter)
+app.use("/auth", authRouter);
 app.use("/posts", postsRouter);
+app.use("/user", userRouter);
 
 app.get("/", (req, res) => {
     res.status(200).send("Ok from server")

@@ -4,16 +4,6 @@ const { success, error } = require("../utils/responseWrapper");
 
 
 
-// Get All posts controller starts here
-const getAllPostsController = async (req, res) => {
-    try {
-        // Request id return by the middleware
-        //  res.status(200).send("These are your all posts");
-        return res.send(success(200, { message: "These are your all posta" }))
-    } catch (error) {
-        console.log(error)
-    }
-}
 
 const createPostController = async (req, res) => {
     try { 
@@ -46,8 +36,6 @@ try {
     const post = await Post.findById(postId);
     
     if( !post ) return res.send(error(404, "Post not found!")); 
-    console.log(post.likes.includes(userId));
-           
 
     if( post.likes.includes(userId) ) {
         const index = post.likes.indexOf(userId);
@@ -73,7 +61,6 @@ try {
 
 
 module.exports = {
-    getAllPostsController,
     createPostController,
     likeAndUnlikeController,
 } 
