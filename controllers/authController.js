@@ -72,7 +72,7 @@ const loginController = async (req, res) => {
         const refreshToken = generateRefreshToken({ id: user._id });
 
         res.cookie( "jwt", refreshToken, {
-            httpOnly: true,
+            httpOnly: true, 
             secure: true
         } )
 

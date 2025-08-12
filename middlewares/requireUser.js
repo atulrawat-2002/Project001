@@ -6,6 +6,7 @@ const User = require("../models/User");
 const requireUser = async (req, res, next) => {
 
     // Checking for authorization token
+    
     if (!req.headers || !req.headers.authorization || !req.headers.authorization.startsWith("Bearer")) {
         // return res.status(409).send("Unauthorized access!")
         return res.send(error(409, "Authorization header is required!"))

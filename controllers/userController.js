@@ -3,6 +3,8 @@ const mongoose = require("mongoose")
 const Post = require("../models/Post");
 const User = require("../models/User");
 const { error, success } = require("../utils/responseWrapper");
+const { mapPostsOutput } = require("../utils/util");
+const cloudinary = require("cloudinary").v2;
 
 const followUnFollowController = async (req, res) => {
     try {
@@ -48,15 +50,25 @@ const getPostsOfFollowing = async (req, res) => {
     try {
         const curUserId = req._id;
 
-        const curUser = await User.findById(curUserId);
+        const curUser = await User.findById(curUserId).populate('followings')
 
-        const posts = await Post.find({
-            'owner': {
-                '$in': curUser.followings
+        const allPosts = await Post.find({
+            owner: {
+               $in: curUser.followings
             }
         })
 
-        return res.send(success(200, posts))
+        const followingsIds = await curUser.followings.map(item => item._id);
+
+        const suggestions = await User.find({
+            _id:{
+                $nin : [...followingsIds, curUserId]
+            }
+        })
+
+        const posts = allPosts.map(post => mapPostsOutput(post, curUserId)).reverse();
+
+        return res.send(success(200, {curUser, posts, suggestions}))
 
     } catch (e) {
         res.send(error(500, e.message))
@@ -151,11 +163,74 @@ const deleteMyProfile = async (req, res) => {
 }
 
 
+async function getMyInfo(req, res) {
+    try {
+        const user = await User.findById(req._id);
+
+        return res.send(success(200, { user }));
+    } catch (e) {
+        res.send(error(500, e.message))
+    }
+}
+
+const updateProfileController = async (req, res) => {
+    try {
+        const name = req.body?.name;
+        const bio = req.body?.bio;
+        const userImg = req.body?.userImg;
+        const userId = req._id;
+        if(!name || !bio || !userImg) return res.send(error(400, "Empty fields are not allowed"))
+        const user = await User.findById(userId);
+        user.name = name || user?.name;
+        user.bio = bio || user?.bio;
+        if(userImg) {
+        const cloudImg = await cloudinary.uploader.upload(userImg);
+        user.avatar = {
+            url: cloudImg.url,
+            publicId: cloudImg.public_id
+        }
+    }
+        await user.save()
+
+        return res.send(success(200, { user }));
+    } catch (e) {
+        res.send(error(500, e.message))
+    }
+}
+
+const getUserProfileController = async (req, res) => {
+    try {
+        const userId = req.body?.userId;        
+
+    const user = await User.findById(userId).populate({
+        path: 'posts',
+        populate: {
+            path: 'owner'
+        }
+    })
+
+    // const user = await User.findById(userId).populate('posts');
+
+    if( !user ) return res.send(error(404, "User not found!"));
+
+    const allPost = user.posts;
+    const posts = allPost.map(post => mapPostsOutput(post, req._id)).reverse();
+
+    res.send(success(200, {user, posts}))
+    // return res.send(success(200, {user}))
+    } catch (e) {  
+        res.send(error(500, e.message));
+    }
+}
+
 
 module.exports = {
     followUnFollowController,
     getPostsOfFollowing,
     getMyPosts,
     getUserPosts,
-    deleteMyProfile
+    deleteMyProfile,
+    getMyInfo,
+    updateProfileController,
+    getUserProfileController
 }

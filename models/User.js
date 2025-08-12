@@ -12,6 +12,9 @@ const userSchema = mongoose.Schema({
         required: true,
         select: false
     },
+    bio: {
+        type: String,
+    },
     name: {
         type: String,
         required: true, 
@@ -38,6 +41,8 @@ const userSchema = mongoose.Schema({
             ref: 'post'
         }
     ]
+}, {
+    timestamps: true
 })
 
 

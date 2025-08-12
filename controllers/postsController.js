@@ -1,18 +1,30 @@
+const { populate } = require("dotenv");
 const Post = require("../models/Post");
 const User = require("../models/User");
 const { success, error } = require("../utils/responseWrapper");
-
+const { mapPostsOutput } = require("../utils/util");
+const cloudinary = require("cloudinary").v2;
 
 
 
 const createPostController = async (req, res) => {
     try {
-        const { caption } = req.body;
+        const { caption, postImg } = req.body;
         const owner = req._id;
+
+        if( !caption || !postImg ) return res.send(error(400, "Caption and Post image are required!"))
+
+        const cloudImg = await cloudinary.uploader.upload(postImg, {
+            folder: 'postImg'
+        })
 
         const post = await Post.create({
             owner,
-            caption
+            caption,
+            image: {
+                publicId: cloudImg.public_id,
+                url: cloudImg.url
+            }
         })
 
         const user = await User.findById(req._id)
@@ -41,16 +53,13 @@ const likeAndUnlikeController = async (req, res) => {
             const index = post.likes.indexOf(userId);
             post.likes.splice(index, 1);
 
-            await post.save()
-
-            return res.send(success(200, "Post Unliked!"));
         } else {
-
             post.likes.push(userId);
-            await post.save();
-
-            return res.send(success(200, "Post Liked"));
         }
+
+        post.save();
+
+        return res.send(success(200, {post: mapPostsOutput(post, userId)}));
     } catch (e) {
         res.send(error(500, e.message));
 
