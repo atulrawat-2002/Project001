@@ -72,12 +72,13 @@ const postUpdateController = async (req, res) => {
         const curUserId = req._id;
 
         const post = await Post.findById(postId);
+        if(!post) return res.send(error(404, "Post not found!"));
 
         if(post.owner != curUserId) return res.send(error(409, "Can not update this post!"));
 
         if(!post) return res.send(error(404, "Post not found!"));
-
-        if(caption) post.caption = caption;
+ 
+        if(caption) post.caption = caption; 
 
         await post.save();
 
@@ -93,14 +94,16 @@ const deletePostController = async (req, res) => {
     try {
         
         const { postId } = req.body;
-    const curUserId = req._id;
+        const curUserId = req._id;
+        
 
     if( !postId ) return res.send(error(409, "Post id is required!"));
 
     const post = await Post.findById(postId);
-    const curUser = await User.findById(curUserId);
+    if( !post ) return res.send(error(404, "Post Not Found!"));
+    const curUser = await User.findById(curUserId);    
 
-    if(post.owner != curUserId) return res.send(error(409, "Can not delete this post!"));
+    if(post?.owner != curUserId) return res.send(error(409, "Can not delete this post!"));
 
     if(!post) return res.send(error(404, "Post not found!"));
 
