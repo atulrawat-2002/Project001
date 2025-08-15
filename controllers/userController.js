@@ -207,9 +207,12 @@ const getUserProfileController = async (req, res) => {
         populate: {
             path: 'owner'
         }
-    })
+    }).populate([
+        { path: 'followers', select: 'name avatar bio' },
+        { path: 'followings', select: 'name avatar bio' }
+    ])
 
-    // const user = await User.findById(userId).populate('posts');
+
 
     if( !user ) return res.send(error(404, "User not found!"));
 
@@ -217,8 +220,9 @@ const getUserProfileController = async (req, res) => {
     const posts = allPost.map(post => mapPostsOutput(post, req._id)).reverse();
 
     res.send(success(200, {user, posts}))
-    // return res.send(success(200, {user}))
     } catch (e) {  
+        console.log(e);
+        
         res.send(error(500, e.message));
     }
 }
