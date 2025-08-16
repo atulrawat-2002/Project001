@@ -10,14 +10,12 @@ const signUpController = async (req, res) => {
         const { email, password, name } = req.body;
 
         if (!email || !password || !name) {
-            // return res.status(400).send("All fields are required!")
             return res.send(error(400, "All fields are required!"))
         }
 
         const oldUser = await User.findOne({ email });
 
         if (oldUser) {
-            // return res.status(409).send("User already registerd!");
             return res.send(error(409, "User already registered!"))
         }
 
@@ -29,9 +27,6 @@ const signUpController = async (req, res) => {
             password: hashPassword
         })
 
-        // return res.status(201).json({
-        //     user
-        // });
 
         return res.send(success(201, { user }))
 
@@ -49,21 +44,18 @@ const loginController = async (req, res) => {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            // return res.status(400).send("All fields are required!");
             return res.send(error(400, "All fields are required!"))
         }
 
         const user = await User.findOne({ email }).select("+password"); 
 
         if (!user) {
-            // return res.status(404).send("User not found!");
             return res.send(error(404, "User not found!"))
         }
 
         const matched = await bcrypt.compare(password, user.password);
 
         if (!matched) {
-            // return res.status(409).send("Incorrect password!");
             return res.send(error(409, "Invalid password!"))
         }
 
@@ -76,10 +68,6 @@ const loginController = async (req, res) => {
             secure: true
         } )
 
-        // return res.json({
-        //     user,
-        //     accessToken
-        // })
 
         res.send(success(200, {
             user,
@@ -96,7 +84,6 @@ const refreshAccessTokenController = (req, res) => {
     const cookies = req.cookies;
 
     if(!cookies.jwt) {
-        // return res.status(401),send("Refrsh Token is require!");
         return res.send(error(401, "Refresh token is required!"))
     }
 
@@ -109,11 +96,9 @@ const refreshAccessTokenController = (req, res) => {
 
         accessToken = generateAccessToken({ _id })
 
-        // return res.status(201).json({ accessToken })
         return res.send(success(201, { accessToken }))
     } catch (e) {
         console.log(e);
-        // return res.status(401).send("Invalid refresh token")
         return res.send(error(401, "Invalid refresh token!"))
     }
 
