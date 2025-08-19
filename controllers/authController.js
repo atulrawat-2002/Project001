@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { error, success } = require("../utils/responseWrapper");
 
-// Controller for sign up starts
 const signUpController = async (req, res) => {
     try {
         const { email, password, name } = req.body;
@@ -37,7 +36,6 @@ const signUpController = async (req, res) => {
     }
 }
 
-// Controller for login starts here
 const loginController = async (req, res) => {
     try {
         
@@ -79,7 +77,6 @@ const loginController = async (req, res) => {
     }
 }
 
-// Refresh access token controller starts here
 const refreshAccessTokenController = (req, res) => {
     const cookies = req.cookies;
 
@@ -117,7 +114,6 @@ const logOutController = async (req, res) => {
     }
 }
 
-// Function for generating access token
 const generateAccessToken = (data) => {
     try {
         const token = jwt.sign(data, process.env.ACCESS_TOKEN_PRIVATE_KEY, { expiresIn: "1d" });
@@ -128,7 +124,6 @@ const generateAccessToken = (data) => {
     }
 }
 
-// Function for generation refresh token
 const generateRefreshToken = (data) => {
     try {
         const token = jwt.sign(data, process.env.REFRESH_TOKEN_PRIVATE_KEY, { expiresIn: "1d" });

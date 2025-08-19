@@ -115,13 +115,11 @@ const deleteMyProfile = async (req, res) => {
         const curUserId = req._id;
         const curUser = await User.findById(curUserId)
 
-        //Step 1: deleting all the post of my self
 
         await Post.deleteMany({
             owner: curUserId
         });
 
-        // Step 2: deleting myself from followers' followings
         for (const followerId of curUser.followers) {
             const follower = await User.findById(followerId);
             const index = follower.followings.indexOf(curUserId);
@@ -131,7 +129,6 @@ const deleteMyProfile = async (req, res) => {
             }
         }
 
-        //    Step 3 : deleting myself from the follwings's followers
         for (const followingId of curUser.followings) {
             const following = await User.findById(followingId);
             const index = following.followers.indexOf(curUserId);
@@ -141,13 +138,11 @@ const deleteMyProfile = async (req, res) => {
             }
         }
 
-        // Step 4 : deleting all the likes
         await Post.updateMany(
             { likes: curUserId },
             { $pull: { likes: curUserId } }
         );
 
-        // Step 5: finally deleting the user
         await User.findByIdAndDelete(curUserId);
 
         res.clearCookie('jwt', {
