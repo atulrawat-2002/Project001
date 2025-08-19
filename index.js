@@ -11,18 +11,15 @@ const cloudinary = require("cloudinary");
 
 dotenv.config("./.env")
 
-// Configuration
-// CLOUDINARY_URL=cloudinary://213451389853737:**********@djw0f2dty
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET // Click 'View API Keys' above to copy your API secret
+    api_secret: process.env.CLOUDINARY_API_SECRET 
 });
 
 const app = express();
 
-// Using built in middlewares
 app.use(morgan());
 app.use(express.json({limit: "5mb"}));
 app.use(cookieParser());
