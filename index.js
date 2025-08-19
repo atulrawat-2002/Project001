@@ -25,7 +25,7 @@ app.use(express.json({limit: "5mb"}));
 app.use(cookieParser());
 app.use(cors({
     credentials: true,
-    origin: "http://localhost:5173"
+    origin: "https://project001-frontend.onrender.com"
 }))
 
 
