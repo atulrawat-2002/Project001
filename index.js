@@ -25,17 +25,29 @@ app.use(express.json({limit: "5mb"}));
 app.use(cookieParser());
 app.use(cors({
     credentials: true,
-    origin: "https://project001-frontend.onrender.com"
+    origin: [
+        "https://project001-frontend.onrender.com",
+        'https://youtube-watch-party-backend-l2m1.onrender.com'
+    ]
 }))
 
+async function pingYoutubeWatchParty() {
 
+    const response = await fetch('https://youtube-watch-party-backend-l2m1.onrender.com/ping');
+    console.log(response);
+
+}
+
+setInterval(async () => {
+    await pingYoutubeWatchParty()
+}, 1000 * 60 * 10);
 
 app.use("/auth", authRouter);
 app.use("/posts", postsRouter);
 app.use("/user", userRouter);
 
-app.get("/", (req, res) => {
-    res.status(200).send("Ok from server")
+app.get("/ping", (req, res) => {
+    res.status(200).send("Ok from connections's server")
 })
 
 connectDB();
