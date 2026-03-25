@@ -20,7 +20,7 @@ cloudinary.config({
 
 const app = express();
 
-app.use(morgan());
+
 app.use(express.json({limit: "5mb"}));
 app.use(cookieParser());
 app.use(cors({
@@ -34,20 +34,25 @@ app.use(cors({
 async function pingYoutubeWatchParty() {
 
     const response = await fetch('https://youtube-watch-party-backend-l2m1.onrender.com/ping');
-    console.log(response);
+    console.log("Response from youtube watch party's backend", response?.statusText);
 
 }
 
 setInterval(async () => {
+    console.log("sending request to youtube-watch party's backend")
     await pingYoutubeWatchParty()
 }, 1000 * 60 * 10);
+
 
 app.use("/auth", authRouter);
 app.use("/posts", postsRouter);
 app.use("/user", userRouter);
+app.use(morgan("dev"));
 
 app.get("/ping", (req, res) => {
-    res.status(200).send("Ok from connections's server")
+    res.status(200).json({
+        message: "Ok from connections's server"
+    })
 })
 
 connectDB();
