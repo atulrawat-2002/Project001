@@ -33,15 +33,18 @@ app.use(cors({
 
 async function pingYoutubeWatchParty() {
 
-    const response = await fetch('https://youtube-watch-party-backend-l2m1.onrender.com/ping');
-    console.log("Response from youtube watch party's backend", response?.statusText);
+    const youtubeWatchPrty = await fetch('https://youtube-watch-party-backend-l2m1.onrender.com/ping');
+    console.log("Response from youtube watch party's backend", youtubeWatchPrty?.statusText);
+    
+    const slackBackend = await fetch('https://slack-clone-backend-82w6.onrender.com/ping');
+    console.log("Response from slack's backend", slackBackend?.statusText);
 
 }
 
 setInterval(async () => {
     console.log("sending request to youtube-watch party's backend")
     await pingYoutubeWatchParty()
-}, 1000 * 60 * 10);
+}, 1000);
 
 
 app.use("/auth", authRouter);
