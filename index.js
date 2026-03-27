@@ -44,7 +44,7 @@ async function pingYoutubeWatchParty() {
 setInterval(async () => {
     console.log("sending request to youtube-watch party's backend")
     await pingYoutubeWatchParty()
-}, 1000);
+}, 1000 * 60 * 10);
 
 
 app.use("/auth", authRouter);
