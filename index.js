@@ -32,20 +32,33 @@ app.use(cors({
 }))
 
 async function pingYoutubeWatchParty() {
+    try {
+        const youtubeWatchPrty = await fetch('https://youtube-watch-party-backend-l2m1.onrender.com/ping');
+        const response = await youtubeWatchPrty.json();
+        console.log("Response from youtube watch party's backend", response);
+    } catch (error) {
+        console.log('Error in youtube ping request', error.message);
+    }
+}
 
-    const youtubeWatchPrty = await fetch('https://youtube-watch-party-backend-l2m1.onrender.com/ping');
-    const res1 = await youtubeWatchPrty.json();
-    console.log("Response from youtube watch party's backend", res1);
-    
-    const slackBackend = await fetch('https://slack-clone-backend-82w6.onrender.com/ping');
-    const res2 = await slackBackend.json()
-    console.log("Response from slack's backend", res2);
-
+async function pingSlack_backend() {
+    try {
+        const slackBackend = await fetch('https://slack-clone-backend-82w6.onrender.com/ping');
+        const response = await slackBackend.json()
+        console.log("Response from slack's backend", response);
+    } catch (error) {
+        console.log('Error in slack_backend ping request', error.message);
+    }
 }
 
 setInterval(async () => {
-    console.log("sending requests \n")
-    await pingYoutubeWatchParty()
+    try {
+        console.log("sending requests \n")
+        await pingYoutubeWatchParty();
+        await pingSlack_backend();
+    } catch (error) {
+        console.log('Error in request interval', error.message);
+    }
 }, 1000 * 60 * 10);
 
 
@@ -55,9 +68,13 @@ app.use("/user", userRouter);
 app.use(morgan("dev"));
 
 app.get("/ping", (req, res) => {
-    res.status(200).json({
-        message: "Ok from connections's server"
-    })
+    try {
+        res.status(200).json({
+            message: "Ok from connections's server"
+        })
+    } catch (error) {
+        console.log('Error while recieving ping request', error.message)
+    }
 })
 
 connectDB();
