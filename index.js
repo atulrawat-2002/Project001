@@ -60,7 +60,7 @@ setInterval(async () => {
     } catch (error) {
         console.log('Error in request interval', error.message);
     }
-}, 5000);
+}, 1000 * 60 * 10);
 
 
 app.use("/auth", authRouter);
