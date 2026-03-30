@@ -51,7 +51,8 @@ async function pingSlack_backend() {
     }
 }
 
-setInterval(async () => {
+try {
+    setInterval(async () => {
     try {
         console.log("sending requests to youtube's backend\n")
         await pingYoutubeWatchParty();
@@ -61,6 +62,9 @@ setInterval(async () => {
         console.log('Error in request interval', error.message);
     }
 }, 1000 * 60 * 10);
+} catch (error) {
+    console.log('Error in setInterval', error.message);
+}
 
 
 app.use("/auth", authRouter);
